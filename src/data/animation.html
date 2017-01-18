@@ -1,0 +1,84 @@
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=No" name="viewport" />
+        <title>Webpage NeoPixel Controller</title>
+        <link href="style.css" rel="stylesheet" />
+        <script>
+            function clickButton(i) {
+                var request = new XMLHttpRequest();
+                request.open("GET", "pixel_animation=" + i, true);
+                request.send(null);
+            }
+        </script>
+    </head>
+    <body>
+        <h1>NeoPixel Controller<BR>_________________</h1>
+        <h2>Choose Animation of LED's</h2>
+
+        <table class="table">
+            <tr>
+                <td width="50%">
+                    <div align="center"><button class="cbtn" id="LED0" onclick="clickButton(0)">Pixels Set to OFF</button></div>
+                </td>
+                <td width="50%">
+                    <div align="center"><button class="cbtn" id="LED1" onclick="clickButton(1)">Pixels Red</button></div>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%">
+                    <div align="center"><button class="cbtn" id="LED2" onclick="clickButton(2)">Pixels Green</button></div>
+                </td>
+                <td width="50%">
+                    <div align="center"><button class="cbtn" id="LED3" onclick="clickButton(3)">Pixels Blue</button></div>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%">
+                    <div align="center"><button class="cbtn" id="LED4" onclick="clickButton(4)">White dots</button></div>
+                </td>
+                <td width="50%">
+                    <div align="center"><button class="cbtn" id="LED5" onclick="clickButton(5)">Red dots</button></div>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%">
+                    <div align="center"><button class="cbtn" id="LED6" onclick="clickButton(6)">Blue dots</button></div>
+                </td>
+                <td width="50%">
+                    <div align="center"><button class="cbtn" id="LED7" onclick="clickButton(7)">Rainbow</button></div>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%">
+                    <div align="center"><button class="cbtn" id="LED8" onclick="clickButton(8)">Rainbow cycle</button></div>
+                </td>
+                <td width="50%">
+                    <div align="center"><button class="cbtn" id="LED9" onclick="clickButton(9)">Rainbow dots</button></div>
+                </td>
+            </tr>
+        </table>
+        <p>
+            <BR><BR><a href="/index.html">Main Page</a><BR>
+        </p>
+        <!--
+        <h2>
+            <BR>Animated Neopixels ANY TYPE !<BR>
+        </h2>
+        <h3>
+            ESP8266 With 40 WS2812B LED's<BR>
+        </h3>
+        <h4>
+            Compiled Using ver. 1.6.5-1160-gef26c5f, built on Sep 30, 2015<BR>
+        </h4>
+        <h5>
+            Compiled Using ver. 1.6.5-1160-gef26c5f, built on Sep 30, 2015<BR>
+        </h5>
+        <h6>
+            Compiled Using ver. 1.6.5-1160-gef26c5f, built on Sep 30, 2015<BR>
+        </h6>
+        <p>
+            Compiled Using ver. 1.6.5-1160-gef26c5f, built on Sep 30, 2015<BR>
+        </p>
+        -->
+    </body>
