@@ -4,12 +4,12 @@
 //#include "PersonnalData.h" //define DEBUG_INIT+DEBUG_ESP if you want
 
 // Prototypage Aspect
-void hasDebugDelay(int duration);
+void delayIfDebug(int duration);
 
 // Déclaration
-void hasDebugDelay(int duration) {
+void delayIfDebug(int duration) {
 #ifdef DEBUG_INIT
-  delay (duration);
+	delay (duration);
 #endif
 }
 
