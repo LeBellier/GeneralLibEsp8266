@@ -18,6 +18,14 @@ uint8_t nbColumns = 13;
 // DNS name
 char* dnsName = "esp8266";
 
+//FTP Id
+char*ftpUser = "esp8266";
+char*ftpPasseWord = "esp8266";
+
+//OTA Id
+char * otaHostName = "LaTable";
+const char * otaPasseWord = "123";
+
 
 //Page de commentaires divers
 

@@ -5,6 +5,7 @@
 #include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266FtpServer.h>
+#include <ArduinoOTA.h>
 #include <Aspect.h>
 #include <FS.h>
 
@@ -20,7 +21,7 @@ FtpServer ftpSrv; //set #define FTP_DEBUG in ESP8266FtpServer.h to see ftp verbo
 
 // Declaration
 
-void initDnsHttpFtpServers() {
+void initDnsHttpFtpOtaServers() {
 	//init spiffs (spi file system)
 	if (!SPIFFS.begin()) {
 		DEBUG_INIT_PRINTLN("Can't open de File system");
@@ -44,11 +45,18 @@ void initDnsHttpFtpServers() {
 	DEBUG_INIT_PRINT(", User:");
 	DEBUG_INIT_PRINTLN(ftpPasseWord);
 
+	//init Ota Server
+	//ArduinoOTA.setPort(8266);// Port defaults to 8266
+	ArduinoOTA.setHostname(otaHostName);// Hostname defaults to esp8266-[ChipID]
+	ArduinoOTA.setPassword(otaPasseWord); // No authentication by default
+	ArduinoOTA.begin();
+	DEBUG_INIT_PRINTLN("OTA server started");
 }
 void updateServers() {
 	mdns.update();
 	ftpSrv.handleFTP();
 	httpServer.handleClient();
+	ArduinoOTA.handle();
 }
 
 void handleRequestOnFile() {
