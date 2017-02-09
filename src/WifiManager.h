@@ -1,4 +1,4 @@
-﻿#ifndef WIFIMANAGER_H
+#ifndef WIFIMANAGER_H
 #define WIFIMANAGER_H
 // Prototypage
 
@@ -7,9 +7,9 @@
 #include <Aspect.h>
 //#include "PersonnalData.h" //have to define nbSSID+SSIDs+passewords
 void initWIFI(); //Connection if it's possible
-ESP8266WiFiClass WiFi;
+//ESP8266WiFiClass WiFi;// comment this if you compile it on arduino IDE
 
-// Déclaration
+// D�claration
 void initWIFI() {
 	char *ssid;
 	char *password;
@@ -51,7 +51,7 @@ void initWIFI() {
 			DEBUG_INIT_PRINTLN(sIP);
 		} else {
 			const char *ssid = "ESP-MPU";
-			const char *password = "thereisnospoon";
+			//const char *password = "thereisnospoon";
 
 			/* You can remove/add the password parameter if you want the AP to be open/secure. */
 			//	WiFi.softAP(ssid, password);
