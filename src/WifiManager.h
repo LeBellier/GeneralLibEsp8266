@@ -22,17 +22,23 @@ void initWIFI() {
 	// WiFi.scanNetworks will return the number of networks found
 	int n = WiFi.scanNetworks();
 	if (n != 0) {
-		int i = 0, j = 0;
-		while (i < n && !wifiFounded) {
-			while (j < nbSSID && !wifiFounded) {
+		int j = 0;
+		while (j < nbSSID && !wifiFounded) {
+			DEBUG_INIT_PRINT("Correspond-il à ");
+			DEBUG_INIT_PRINTLN(SSIDs[j]);
+			int i=0;
+			while (i < n && !wifiFounded) {
+				DEBUG_INIT_PRINT("Wifi detecté: ");
+				DEBUG_INIT_PRINTLN(((ESP8266WiFiScanClass) WiFi).SSID(i));
+			
 				if (((ESP8266WiFiScanClass) WiFi).SSID(i) == SSIDs[j]) {
 					ssid = SSIDs[j];
 					password = passewords[j];
 					wifiFounded = true;
 				}
-				j++;
+				i++;
 			}
-			i++;
+			j++;
 		}
 
 		if (wifiFounded) {
