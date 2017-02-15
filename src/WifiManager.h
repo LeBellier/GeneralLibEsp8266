@@ -5,14 +5,12 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiScan.h>
 #include <Aspect.h>
-//#include "PersonnalData.h" //have to define nbSSID+SSIDs+passewords
-void initWIFI(); //Connection if it's possible
-//ESP8266WiFiClass WiFi;// comment this if you compile it on arduino IDE
+void initWIFI(uint8_t nbSSID, String* SSIDs, String* passewords); //Connection if it's possible
 
 // Déclaration
-void initWIFI() {
-	char *ssid;
-	char *password;
+void initWIFI(uint8_t nbSSID, String* SSIDs, String* passewords) {
+	String ssid;
+	String password;
 
 	boolean wifiFounded = false;
 	// Set WiFi to station mode and disconnect from an AP if it was previously connected
@@ -24,14 +22,15 @@ void initWIFI() {
 	if (n != 0) {
 		int j = 0;
 		while (j < nbSSID && !wifiFounded) {
+			ssid = SSIDs[j];
 			DEBUG_INIT_PRINT("Correspond-il à ");
-			DEBUG_INIT_PRINTLN(SSIDs[j]);
+			DEBUG_INIT_PRINTLN(ssid);
 			int i = 0;
 			while (i < n && !wifiFounded) {
 				DEBUG_INIT_PRINT("Wifi detecté: ");
-				DEBUG_INIT_PRINTLN(((ESP8266WiFiScanClass) WiFi).SSID(i));
+				DEBUG_INIT_PRINTLN(((ESP8266WiFiScanClass ) WiFi).SSID(i));
 
-				if (((ESP8266WiFiScanClass) WiFi).SSID(i) == SSIDs[j]) {
+				if (((ESP8266WiFiScanClass) WiFi).SSID(i) == ssid) {
 					ssid = SSIDs[j];
 					password = passewords[j];
 					wifiFounded = true;
@@ -42,7 +41,12 @@ void initWIFI() {
 		}
 
 		if (wifiFounded) {
-			WiFi.begin(ssid, password);
+			char *cSsid = &ssid[0];
+			char *cPassword = &password[0u];
+			WiFi.begin(cSsid, cPassword);
+			free(cSsid);
+			free(cPassword);
+
 			DEBUG_INIT_PRINTLN("");
 			// Wait for connection
 			while (WiFi.status() != WL_CONNECTED) {

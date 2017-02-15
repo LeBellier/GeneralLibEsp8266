@@ -4,12 +4,13 @@
 // Prototypage
 #include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>
-#include <ESP8266FtpServer.h>
+#include "esp8266FTPServer/ESP8266FtpServer.h"
 #include <ArduinoOTA.h>
 #include <Aspect.h>
 #include <FS.h>
 
-void initDnsHttpFtpServers();
+void initDnsHttpFtpServers(char* dnsName, char* ftpUser, char* ftpPasseWord,
+		char*otaHostName, char*otaPasseWord);
 void updateServers();
 
 void handleRequestOnFile();
@@ -21,7 +22,8 @@ FtpServer ftpSrv; //set #define FTP_DEBUG in ESP8266FtpServer.h to see ftp verbo
 
 // Declaration
 
-void initDnsHttpFtpOtaServers() {
+void initDnsHttpFtpOtaServers(char* dnsName, char* ftpUser, char* ftpPasseWord,
+		char*otaHostName, char*otaPasseWord) {
 	//init spiffs (spi file system)
 	if (!SPIFFS.begin()) {
 		DEBUG_INIT_PRINTLN("Can't open de File system");

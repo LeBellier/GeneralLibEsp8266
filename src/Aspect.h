@@ -1,6 +1,10 @@
 ﻿#ifndef ASPECT_H
 #define ASPECT_H
 
+// Uncomment to print debugging info to console attached to ESP8266
+#define DEBUG_ESP
+#define DEBUG_INIT
+
 //#include "PersonnalData.h" //define DEBUG_INIT+DEBUG_ESP if you want
 
 // Prototypage Aspect
