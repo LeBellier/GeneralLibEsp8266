@@ -26,11 +26,11 @@ void initWIFI() {
 		while (j < nbSSID && !wifiFounded) {
 			DEBUG_INIT_PRINT("Correspond-il à ");
 			DEBUG_INIT_PRINTLN(SSIDs[j]);
-			int i=0;
+			int i = 0;
 			while (i < n && !wifiFounded) {
 				DEBUG_INIT_PRINT("Wifi detecté: ");
 				DEBUG_INIT_PRINTLN(((ESP8266WiFiScanClass) WiFi).SSID(i));
-			
+
 				if (((ESP8266WiFiScanClass) WiFi).SSID(i) == SSIDs[j]) {
 					ssid = SSIDs[j];
 					password = passewords[j];

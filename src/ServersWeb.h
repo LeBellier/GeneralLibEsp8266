@@ -47,7 +47,7 @@ void initDnsHttpFtpOtaServers() {
 
 	//init Ota Server
 	//ArduinoOTA.setPort(8266);// Port defaults to 8266
-	ArduinoOTA.setHostname(otaHostName);// Hostname defaults to esp8266-[ChipID]
+	ArduinoOTA.setHostname(otaHostName);	// Hostname defaults to esp8266-[ChipID]
 	ArduinoOTA.setPassword(otaPasseWord); // No authentication by default
 	ArduinoOTA.begin();
 	DEBUG_INIT_PRINTLN("OTA server started");
