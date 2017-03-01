@@ -5,6 +5,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiScan.h>
 #include <Aspect.h>
+
 void initWIFI(uint8_t nbSSID, String* SSIDs, String* passewords); //Connection if it's possible
 
 // Déclaration
@@ -44,8 +45,6 @@ void initWIFI(uint8_t nbSSID, String* SSIDs, String* passewords) {
 			char *cSsid = &ssid[0];
 			char *cPassword = &password[0u];
 			WiFi.begin(cSsid, cPassword);
-			free(cSsid);
-			free(cPassword);
 
 			DEBUG_INIT_PRINTLN("");
 			// Wait for connection

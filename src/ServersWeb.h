@@ -5,6 +5,7 @@
 #include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>
 #include "esp8266FTPServer/ESP8266FtpServer.h"
+#include "esp8266TelnetServer/ESP8266TelnetServer.h"
 #include <ArduinoOTA.h>
 #include <Aspect.h>
 #include <FS.h>
@@ -19,6 +20,7 @@ bool loadFromSpiffs(String path);
 MDNSResponder mdns;
 ESP8266WebServer httpServer; // port default=80
 FtpServer ftpSrv; //set #define FTP_DEBUG in ESP8266FtpServer.h to see ftp verbose on serial
+ESP8266TelnetServer telnetServer(23);
 
 // Declaration
 
@@ -53,19 +55,26 @@ void initDnsHttpFtpOtaServers(char* dnsName, char* ftpUser, char* ftpPasseWord,
 	ArduinoOTA.setPassword(otaPasseWord); // No authentication by default
 	ArduinoOTA.begin();
 	DEBUG_INIT_PRINTLN("OTA server started");
+
+	//init Telnet Server
+	telnetServer.begin();
+	DEBUG_INIT_PRINTLN("Telnet server started");
+
+
 }
 void updateServers() {
 	mdns.update();
 	ftpSrv.handleFTP();
 	httpServer.handleClient();
 	ArduinoOTA.handle();
+	telnetServer.handle();
 }
 
 void handleRequestOnFile() {
 	String uriAsked = httpServer.uri();
 	DEBUG_PRINTLN(uriAsked);
 
-	//check the request
+//check the request
 	if (!loadFromSpiffs(uriAsked)) { // no file at the uri found
 		String message = "File Not Detected  ";
 		message += "URI: ";
