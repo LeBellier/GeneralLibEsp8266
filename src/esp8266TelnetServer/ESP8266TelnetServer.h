@@ -10,13 +10,12 @@
 
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
-#include <ESP8266WebServer.h>
 #include <Arduino.h>
 
-class ESP8266TelnetServer: public WiFiServer {
+class ESP8266TelnetServer {
 public:
-	ESP8266TelnetServer(uint16_t port = 23);
-	void begin();
+	ESP8266TelnetServer();
+	void began();
 	void handle();
 	void send(String msg);
 

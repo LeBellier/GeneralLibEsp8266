@@ -20,7 +20,7 @@ bool loadFromSpiffs(String path);
 MDNSResponder mdns;
 ESP8266WebServer httpServer; // port default=80
 FtpServer ftpSrv; //set #define FTP_DEBUG in ESP8266FtpServer.h to see ftp verbose on serial
-ESP8266TelnetServer telnetServer(23);
+ESP8266TelnetServer telnetServeur;
 
 // Declaration
 
@@ -56,10 +56,7 @@ void initDnsHttpFtpOtaServers(char* dnsName, char* ftpUser, char* ftpPasseWord,
 	ArduinoOTA.begin();
 	DEBUG_INIT_PRINTLN("OTA server started");
 
-	//init Telnet Server
-	telnetServer.begin();
-	DEBUG_INIT_PRINTLN("Telnet server started");
-
+	telnetServeur.began();
 
 }
 void updateServers() {
@@ -67,7 +64,7 @@ void updateServers() {
 	ftpSrv.handleFTP();
 	httpServer.handleClient();
 	ArduinoOTA.handle();
-	telnetServer.handle();
+	telnetServeur.handle();
 }
 
 void handleRequestOnFile() {
