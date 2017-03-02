@@ -18,6 +18,7 @@ public:
 	void began();
 	void handle();
 	void send(String msg);
+	void disconnect();
 
 private:
 	WiFiClient serverClient;

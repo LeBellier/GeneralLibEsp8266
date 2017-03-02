@@ -5,7 +5,8 @@
  *      Author: Bruno
  */
 
-#include <esp8266TelnetServer/ESP8266TelnetServer.h>
+#include "ESP8266TelnetServer.h"
+#include "Aspect.h"
 
 WiFiServer telnet_srv(23);
 
@@ -14,7 +15,7 @@ ESP8266TelnetServer::ESP8266TelnetServer() {
 void ESP8266TelnetServer::began() {
 	telnet_srv.begin();
 	telnet_srv.setNoDelay(true);
-	Serial.println("Please connect Telnet Client.");
+	DEBUG_INIT_PRINTLN("Please connect Telnet Client.");
 }
 
 void ESP8266TelnetServer::handle() {
@@ -22,18 +23,19 @@ void ESP8266TelnetServer::handle() {
 	// look for Client connect trial
 	if (telnet_srv.hasClient()) {
 		if (!serverClient || !serverClient.connected()) {
-			if (serverClient) {
-				serverClient.stop();
-				Serial.println("Telnet Client Stop");
-			}
+			disconnect();
 			serverClient = telnet_srv.available();
-			Serial.println("New Telnet client");
+			DEBUG_PRINT("New Telnet client\n");
 			serverClient.flush(); // clear input buffer, else you get strange characters
 		}
 	}
 
 	while (serverClient.available()) { // get data from Client
-		Serial.write(serverClient.read());
+		char charRX = serverClient.read();
+		if (charRX == 'q') {
+			disconnect();
+		}
+		DEBUG_PRINT(charRX);
 	}
 }
 void ESP8266TelnetServer::send(String msg) {
@@ -41,4 +43,10 @@ void ESP8266TelnetServer::send(String msg) {
 		serverClient.print(msg);
 	}
 	delay(10);  // to avoid strange characters left in buffer
+}
+void ESP8266TelnetServer::disconnect() {
+	if (serverClient) {
+		serverClient.stop();
+		DEBUG_PRINT("Telnet Client Stop\n");
+	}
 }

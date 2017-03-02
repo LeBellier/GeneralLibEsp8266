@@ -24,7 +24,8 @@ ESP8266TelnetServer telnetServeur;
 
 // Declaration
 
-void initDnsHttpFtpOtaServers(char* dnsName, char* ftpUser, char* ftpPasseWord,
+void initDnsHttpFtpOtaTelnetServers(char* dnsName, char* ftpUser,
+		char* ftpPasseWord,
 		char*otaHostName, char*otaPasseWord) {
 	//init spiffs (spi file system)
 	if (!SPIFFS.begin()) {
@@ -56,6 +57,7 @@ void initDnsHttpFtpOtaServers(char* dnsName, char* ftpUser, char* ftpPasseWord,
 	ArduinoOTA.begin();
 	DEBUG_INIT_PRINTLN("OTA server started");
 
+	//init Telnet Server
 	telnetServeur.began();
 
 }
@@ -69,7 +71,8 @@ void updateServers() {
 
 void handleRequestOnFile() {
 	String uriAsked = httpServer.uri();
-	DEBUG_PRINTLN(uriAsked);
+	DEBUG_PRINT(uriAsked);
+	DEBUG_PRINT("\n");
 
 //check the request
 	if (!loadFromSpiffs(uriAsked)) { // no file at the uri found
@@ -85,7 +88,7 @@ void handleRequestOnFile() {
 					+ httpServer.arg(i);
 		}
 		httpServer.send(404, "text/plain", message);
-		DEBUG_INIT_PRINTLN(message);
+		telnetServeur.send(message);
 	}
 }
 
@@ -127,7 +130,7 @@ bool loadFromSpiffs(String path) {
 	if (httpServer.hasArg("download"))
 		dataType = "application/octet-stream";
 	if (httpServer.streamFile(dataFile, dataType) != dataFile.size()) {
-		DEBUG_PRINTLN("Sent less data than expected!");
+		DEBUG_PRINT("Sent less data than expected!\n");
 		return false;
 	}
 	dataFile.close();
