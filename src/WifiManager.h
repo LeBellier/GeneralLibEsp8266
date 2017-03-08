@@ -15,8 +15,9 @@ void initWIFI(uint8_t nbSSID, String* SSIDs, String* passewords) {
 
 	boolean wifiFounded = false;
 	// Set WiFi to station mode and disconnect from an AP if it was previously connected
-	WiFi.enableSTA(true);
 	WiFi.disconnect();
+	WiFi.mode(WIFI_STA);
+
 	delay(100);
 	// WiFi.scanNetworks will return the number of networks found
 	int n = WiFi.scanNetworks();

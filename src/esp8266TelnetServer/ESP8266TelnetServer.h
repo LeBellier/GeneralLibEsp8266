@@ -11,14 +11,19 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <Arduino.h>
+#include "Logger.h"
 
-class ESP8266TelnetServer {
+class ESP8266TelnetServer: public Print {
+
 public:
 	ESP8266TelnetServer();
-	void began();
-	void handle();
-	void send(String msg);
-	void disconnect();
+	virtual ~ESP8266TelnetServer();
+	void began(Logger*);
+	void handle(Logger*);
+	void print(String);
+	void println(String);
+	void disconnect(Logger*);
+	size_t write(uint8_t) override;
 
 private:
 	WiFiClient serverClient;
