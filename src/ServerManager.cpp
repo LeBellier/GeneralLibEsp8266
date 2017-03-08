@@ -11,8 +11,7 @@ void handleRequestOnFile() {
 
 }
 
-ServerManager::ServerManager(Logger* logger) :
-		logger(logger) {
+ServerManager::ServerManager() {
 	// TODO Auto-generated constructor stub
 
 }
@@ -54,7 +53,7 @@ void ServerManager::initDnsHttpFtpOtaTelnetServers(char* dnsName, char* ftpUser,
 	//logger.print("OTA server started");
 
 	//init Telnet Server
-	telnetServeur.began(logger);
+	telnetServeur.began();
 
 }
 void ServerManager::updateServers() {
@@ -62,7 +61,7 @@ void ServerManager::updateServers() {
 	ftpSrv.handleFTP();
 	httpServer.handleClient();
 	ArduinoOTA.handle();
-	telnetServeur.handle(logger);
+	telnetServeur.handle();
 }
 
 void ServerManager::handleRequestFile() {
@@ -125,7 +124,7 @@ bool ServerManager::loadFromSpiffs(String path) {
 	if (httpServer.hasArg("download"))
 		dataType = "application/octet-stream";
 	if (httpServer.streamFile(dataFile, dataType) != dataFile.size()) {
-		logger->sendln("Sent less data than expected!");
+		Serial.println("Sent less data than expected!");
 		return false;
 	}
 	dataFile.close();

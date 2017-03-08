@@ -14,11 +14,11 @@
 #include "esp8266TelnetServer/ESP8266TelnetServer.h"
 #include <ArduinoOTA.h>
 #include <FS.h>
-#include "Logger.h"
+
 
 class ServerManager {
 public:
-	ServerManager(Logger*);
+	ServerManager();
 	virtual ~ServerManager();
 
 	void initDnsHttpFtpOtaTelnetServers(char* dnsName, char* ftpUser,
@@ -32,7 +32,6 @@ public:
 	FtpServer ftpSrv; //set #define FTP_DEBUG in ESP8266FtpServer.h to see ftp verbose on serial
 	ESP8266TelnetServer telnetServeur;
 
-	Logger* logger;
 };
 
 #endif /* LIBRARIES_GENERALLIBESP8266_SERVERMANAGER_H_ */

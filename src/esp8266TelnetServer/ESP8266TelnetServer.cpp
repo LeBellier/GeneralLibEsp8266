@@ -14,20 +14,20 @@ ESP8266TelnetServer::ESP8266TelnetServer() {
 ESP8266TelnetServer::~ESP8266TelnetServer() {
 }
 
-void ESP8266TelnetServer::began(Logger* logger) {
+void ESP8266TelnetServer::began() {
 	telnet_srv.begin();
 	telnet_srv.setNoDelay(true);
-	logger->sendln("Please connect Telnet Client.");
+	Serial.println("Please connect Telnet Client.");
 }
 
-void ESP8266TelnetServer::handle(Logger* logger) {
+void ESP8266TelnetServer::handle() {
 
 	// look for Client connect trial
 	if (telnet_srv.hasClient()) {
 		if (!serverClient || !serverClient.connected()) {
-			disconnect(logger);
+			disconnect();
 			serverClient = telnet_srv.available();
-			logger->send("New Telnet client\n");
+			Serial.print("New Telnet client\n");
 			serverClient.flush(); // clear input buffer, else you get strange characters
 		}
 	}
@@ -35,9 +35,9 @@ void ESP8266TelnetServer::handle(Logger* logger) {
 	while (serverClient.available()) { // get data from Client
 		char charRX = serverClient.read();
 		if (charRX == 'q') {
-			disconnect(logger);
+			disconnect();
 		}
-		logger->send((String) charRX);
+		Serial.print((String) charRX);
 	}
 }
 void ESP8266TelnetServer::print(String msg) {
@@ -56,9 +56,9 @@ void ESP8266TelnetServer::println(String msg) {
 size_t ESP8266TelnetServer::write(uint8_t c) {
 	serverClient.write(c);
 }
-void ESP8266TelnetServer::disconnect(Logger* logger) {
+void ESP8266TelnetServer::disconnect() {
 	if (serverClient) {
 		serverClient.stop();
-		logger->send("Telnet Client Stop\n");
+		Serial.print("Telnet Client Stop\n");
 	}
 }
