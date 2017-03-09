@@ -14,7 +14,7 @@
 #include "esp8266TelnetServer/ESP8266TelnetServer.h"
 #include <ArduinoOTA.h>
 #include <FS.h>
-
+#include <Aspect.h>
 
 class ServerManager {
 public:
@@ -25,8 +25,14 @@ public:
 			char* ftpPasseWord, char*otaHostName, char*otaPasseWord);
 	void updateServers();
 
-	void handleRequestFile();bool loadFromSpiffs(String path);
+	void printDebug(String);
+	void printlnDebug(String);
+	void handleRequestFile();
 
+	bool loadFromSpiffs(String path);
+	ESP8266WebServer getHttpServer();
+
+private:
 	MDNSResponder mdns;
 	ESP8266WebServer httpServer; // port default=80
 	FtpServer ftpSrv; //set #define FTP_DEBUG in ESP8266FtpServer.h to see ftp verbose on serial
