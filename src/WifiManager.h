@@ -3,8 +3,6 @@
 // Prototypage
 
 #include <ESP8266WiFi.h>
-#include <ESP8266WiFiScan.h>
-#include <Aspect.h>
 
 void initWIFI(uint8_t nbSSID, String* SSIDs, String* passewords); //Connection if it's possible
 
