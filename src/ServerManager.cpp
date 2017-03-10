@@ -53,31 +53,13 @@ void ServerManager::initDnsHttpFtpOtaTelnetServers(char* dnsName, char* ftpUser,
 	telnetServeur.begin();
 
 }
+
 void ServerManager::updateServers() {
 	mdns.update();
 	ftpSrv.handleFTP();
 	httpServer.handleClient();
 	ArduinoOTA.handle();
 	telnetServeur.handleClient();
-}
-
-void ServerManager::printDebug(String s) {
-	if (telnetServeur.hasConnectedClient()) {
-		telnetServeur.print(s);
-	} else {
-		DEBUG_PRINT(s);
-	}
-}
-void ServerManager::printlnDebug(String s) {
-	if (telnetServeur.hasConnectedClient()) {
-		telnetServeur.println(s);
-	} else {
-		DEBUG_PRINTLN(s);
-	}
-
-}
-ESP8266WebServer ServerManager::getHttpServer() {
-	return httpServer;
 }
 
 void ServerManager::handleRequestFile() {
@@ -146,3 +128,23 @@ bool ServerManager::loadFromSpiffs(String path) {
 	return true;
 }
 
+void ServerManager::printDebug(String s) {
+	if (telnetServeur.hasConnectedClient()) {
+		telnetServeur.print(s);
+	} else {
+		DEBUG_PRINT(s);
+	}
+}
+
+void ServerManager::printlnDebug(String s) {
+	if (telnetServeur.hasConnectedClient()) {
+		telnetServeur.println(s);
+	} else {
+		DEBUG_PRINTLN(s);
+	}
+}
+
+/*Dont work i dont know why
+ ESP8266WebServer* ServerManager::getHttpServer() {
+ return &httpServer;
+ }*/

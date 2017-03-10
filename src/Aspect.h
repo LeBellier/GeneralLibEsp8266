@@ -5,18 +5,6 @@
 #define DEBUG_ESP
 #define DEBUG_INIT
 
-//#include "PersonnalData.h" //define DEBUG_INIT+DEBUG_ESP if you want
-
-// Prototypage Aspect
-//void delayIfDebug(int duration);
-//
-//// Déclaration
-//void delayIfDebug(int duration) {
-//#ifdef DEBUG_INIT
-//	delay(duration);
-//#endif
-//}
-
 // Define where debug output will be printed.
 #define DEBUG_PRINTER Serial
 
