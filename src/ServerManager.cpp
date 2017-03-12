@@ -52,6 +52,9 @@ void ServerManager::initDnsHttpFtpOtaTelnetServers(char* dnsName, char* ftpUser,
 	//init Telnet Server
 	telnetServeur.begin();
 
+#ifdef DEBUG_INIT
+	delay(20);
+#endif
 }
 
 void ServerManager::updateServers() {
