@@ -18,7 +18,7 @@ Unzip the projet in your `~/Documents/Arduino/libraries` folder.
 
 
 ### <i class="icon-cog"></i>  Telnet Server
-To enable the telnet client through command line, You have to run the below command in command prompt with **administrator** permissions.
+To enable the telnet client through command line on windows, you have to run the below command in command prompt with **administrator** permissions.
 
 `dism /online /Enable-Feature /FeatureName:TelnetClient`
 
@@ -26,9 +26,16 @@ To enable the telnet client through command line, You have to run the below comm
 https://github.com/nailbuster/esp8266FTPServer
 https://github.com/rstephan/ArtnetWifi
 https://github.com/adafruit/Adafruit_NeoPixel
+#####And built-in libs:
+ArduinoOTA
+FS
 
-
-
+###Contributing
+- Fork it
+- Create your feature branch (git checkout -b my-new-feature)
+- Commit your changes (git commit -am 'Add some feature')
+- Push to the branch (git push origin my-new-feature)
+- Create new Pull Request
 
 
 

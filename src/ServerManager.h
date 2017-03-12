@@ -11,7 +11,8 @@
 #define SERVERMANAGER_H_
 
 #include <ESP8266mDNS.h>
-#include "esp8266FTPServer/ESP8266FtpServer.h"
+#include <ESP8266FtpServer.h>
+#include <ESP8266WebServer.h>
 #include "esp8266TelnetServer/ESP8266TelnetServer.h"
 #include <ArduinoOTA.h>
 #include <FS.h>
