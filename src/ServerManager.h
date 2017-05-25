@@ -31,6 +31,7 @@ public:
 
 	void printDebug(String);
 	void printlnDebug(String);
+	String printRequest();
 
 	ESP8266WebServer httpServer; // port default=80
 private:
