@@ -2,8 +2,8 @@
 #define ASPECT_H
 
 // Uncomment to print debugging info to console attached to ESP8266
-#define DEBUG_ESP
-#define DEBUG_INIT
+//#define DEBUG_ESP
+//#define DEBUG_INIT
 
 // Define where debug output will be printed.
 #define DEBUG_PRINTER Serial

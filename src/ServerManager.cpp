@@ -64,7 +64,19 @@ void ServerManager::updateServers() {
 	ArduinoOTA.handle();
 	telnetServeur.handleClient();
 }
-
+String ServerManager::printRequest() {
+	String message = "URI: ";
+	message += httpServer.uri();
+	message += "\r\n  Method: ";
+	message += (httpServer.method() == HTTP_GET) ? "GET" : "POST";
+	message += "\r\n  Arguments: ";
+	message += httpServer.args();
+	for (uint8_t i = 0; i < httpServer.args(); i++) {
+		message += "\r\n NAME:" + httpServer.argName(i) + " VALUE:"
+				+ httpServer.arg(i);
+	}
+	return message;
+}
 void ServerManager::handleRequestFile() {
 	String uriAsked = httpServer.uri();
 	printlnDebug(uriAsked);
@@ -72,16 +84,7 @@ void ServerManager::handleRequestFile() {
 	//check the request
 	if (!loadFromSpiffs(uriAsked)) { // no file at the uri found
 		String message = "File Not Detected  ";
-		message += "URI: ";
-		message += uriAsked;
-		message += "\n  Method: ";
-		message += (httpServer.method() == HTTP_GET) ? "GET" : "POST";
-		message += "\n  Arguments: ";
-		message += httpServer.args();
-		for (uint8_t i = 0; i < httpServer.args(); i++) {
-			message += "\n NAME:" + httpServer.argName(i) + " VALUE:"
-					+ httpServer.arg(i);
-		}
+		message += printRequest();
 		httpServer.send(404, "text/plain", message);
 		printlnDebug(message);
 	}
@@ -94,8 +97,7 @@ bool ServerManager::loadFromSpiffs(String path) {
 		path += "index.html";
 	if (path.endsWith(".src"))
 		path = path.substring(0, path.lastIndexOf("."));
-
-	if (path.endsWith(".html"))
+	else if (path.endsWith(".html"))
 		dataType = "text/html";
 	else if (path.endsWith(".css"))
 		dataType = "text/css";
