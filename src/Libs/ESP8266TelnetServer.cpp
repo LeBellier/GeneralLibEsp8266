@@ -5,7 +5,7 @@
  *      Author: Bruno
  */
 
-#include "ESP8266TelnetServer.h"
+#include <Libs/ESP8266TelnetServer.h>
 
 WiFiServer telnet_srv(23);
 
@@ -17,7 +17,7 @@ ESP8266TelnetServer::~ESP8266TelnetServer() {
 void ESP8266TelnetServer::begin() {
 	telnet_srv.begin();
 	telnet_srv.setNoDelay(true);
-	DEBUG_INIT_PRINTLN("Please connect Telnet Client.");
+	DEBUG_SVR_TELNET("Please connect Telnet Client.");
 }
 
 void ESP8266TelnetServer::handleClient() {
@@ -27,7 +27,7 @@ void ESP8266TelnetServer::handleClient() {
 		if (!hasConnectedClient()) {
 			stopClient();
 			serverClient = telnet_srv.available();
-			DEBUG_PRINTLN("New Telnet client");
+			DEBUG_SVR_TELNET("New Telnet client");
 			serverClient.flush(); // clear input buffer, else you get strange characters
 		}
 	}
@@ -37,7 +37,7 @@ void ESP8266TelnetServer::handleClient() {
 		if (charRX == 'q') {
 			stopClient();
 		}
-		DEBUG_PRINT((String ) charRX);
+		//DEBUG_PRINT((String ) charRX);
 	}
 }
 bool ESP8266TelnetServer::hasConnectedClient() {
@@ -47,7 +47,7 @@ bool ESP8266TelnetServer::hasConnectedClient() {
 void ESP8266TelnetServer::stopClient() {
 	if (serverClient) {
 		serverClient.stop();
-		DEBUG_PRINTLN("Telnet Client Stop");
+		DEBUG_SVR_TELNET("Telnet Client Stop");
 	}
 }
 
@@ -65,4 +65,19 @@ size_t ESP8266TelnetServer::write(const uint8_t* buffer, size_t size) {
 	}
 	delay(10);  // to avoid strange characters left in buffer
 	return size;
+}
+void ESP8266TelnetServer::setDebug(bool param) {
+	_debug = param;
+}
+template<typename Generic>
+void ESP8266TelnetServer::DEBUG_SVR_TELNET(Generic text) {
+	if (_debug) {
+		if (hasConnectedClient()) {
+			print("*TelS*: ");
+			println(text);
+		} else {
+			Serial.print("*TelS*: ");
+			Serial.println(text);
+		}
+	}
 }

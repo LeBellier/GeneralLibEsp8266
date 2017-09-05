@@ -13,7 +13,6 @@
 #define _ESP8266TELNETSERVER_H_
 
 #include <ESP8266WiFi.h>
-#include <Aspect.h>
 
 class ESP8266TelnetServer: public Print {
 
@@ -27,9 +26,14 @@ public:
 	size_t write(uint8_t) override;
 	size_t write(const uint8_t *, size_t) override;
 
+	void setDebug(bool);
+
 private:
 	WiFiClient serverClient;
 
+	bool _debug = true;
+	template<typename Generic>
+	void DEBUG_SVR_TELNET(Generic text);
 };
 
 #endif /* _ESP8266TELNETSERVER_H_ */
