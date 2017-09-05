@@ -5,33 +5,37 @@
  *      Author: Bruno
  */
 
-#include <Libs/ServerManager.h>
+#include "ServerManager.h"
 
 ServerManager::ServerManager() {
+
 }
 ServerManager::~ServerManager() {
 }
 
 void ServerManager::setServersON(uint8_t status) {
-//init spiffs (spi file system)
-	if (!SPIFFS.begin()) {
+	serversON = status;
+
+	if (!SPIFFS.begin()) { //init spiffs (spi file system)
 		DEBUG_SVR_M("Can't open de File system");
 	}
 
-	if (status & SERVER_DNS) { //init DNS
-		dnsSvr.reset(new DNSServer());
-		/* Setup the DNS server redirecting all the domains to the apIP */
-		dnsSvr->setErrorReplyCode(DNSReplyCode::NoError);
-		dnsSvr->start(DNS_PORT, "*", WiFi.softAPIP());
-
-		DEBUG_SVR_M("MDNS responder started");
-		String msg = F("You can use the name: http://{1}.local/");
-		msg.replace("{1}", dnsName);
-		DEBUG_SVR_M(msg);
-
+	if (serversON & SERVER_TELNET) { //init Telnet Server
+		telnetSvr.reset(new ESP8266TelnetServer());
+		telnetSvr->begin();
 	}
-
-	if (status & SERVER_HTTP) { //init Http Server
+	if (serversON & SERVER_DNS) { //init DNS
+		dnsSvr.reset(new MDNSResponder());
+		//init DNS
+		if (dnsSvr->begin(dnsName, WiFi.localIP())) {
+			DEBUG_SVR_M("MDNS responder started");
+			String msg = F("You can use the name: http://{1}.local/");
+			msg.replace("{1}", dnsName);
+			DEBUG_SVR_M(msg);
+		}
+	}
+	if (serversON & SERVER_HTTP) { //init Http Server
+		httpSvr.reset(new ESP8266WebServer());
 		// in the setup of the .ino
 		//httpSvr->onNotFound(handleRequestFile);
 		//serverManager.getHttpServer().on("/pixel", HTTP_GET, pixelRequest); // and all other adresse page you want out of file
@@ -39,7 +43,8 @@ void ServerManager::setServersON(uint8_t status) {
 		DEBUG_SVR_M("HTTP server started");
 	}
 
-	if (status & SERVER_FTP) { //init Ftp Server
+	if (serversON & SERVER_FTP) { //init Ftp Server
+		ftpSvr.reset(new FtpServer());
 		ftpSvr->begin(userName, passeword); //username, password for ftp.  set ports in ESP8266FtpServer.h  (default 21, 50009 for PASV)
 		String msg = F("FTP server started; MdP:{1}, User:{2}");
 		msg.replace("{2}", userName);
@@ -47,7 +52,7 @@ void ServerManager::setServersON(uint8_t status) {
 		DEBUG_SVR_M(msg);
 	}
 
-	if (status & SERVER_OTA) { //init Ota Server
+	if (serversON & SERVER_OTA) { //init Ota Server
 		//ArduinoOTA.setPort(8266);// Port defaults to 8266
 		ArduinoOTA.setHostname(userName);		// Hostname defaults to esp8266-[ChipID]
 		ArduinoOTA.setPassword(passeword); // No authentication by default
@@ -58,21 +63,25 @@ void ServerManager::setServersON(uint8_t status) {
 		DEBUG_SVR_M(msg);
 	}
 
-	if (status & SERVER_TELNET) { //init Telnet Server
-		telnetSvr->begin();
-	}
-
 	if (_debug) {
 		delay(20);
 	}
 }
 
 void ServerManager::update() {
-	dnsSvr->processNextRequest();
-	ftpSvr->handleFTP();
-	httpSvr->handleClient();
 	ArduinoOTA.handle();
-	telnetSvr->handleClient();
+	if (serversON & SERVER_TELNET) {
+		telnetSvr->handleClient();
+	}
+	if (serversON & SERVER_DNS) {
+		dnsSvr->update();
+	}
+	if (serversON & SERVER_HTTP) {
+		httpSvr->handleClient();
+	}
+	if (serversON & SERVER_FTP) {
+		ftpSvr->handleFTP();
+	}
 }
 String ServerManager::printRequest() {
 	String message = "URI: ";
@@ -157,6 +166,10 @@ void ServerManager::setPasseword(char*param) {
 }
 void ServerManager::setDebug(bool param) {
 	_debug = param;
+}
+
+void ServerManager::printDebug(String text) {
+	DEBUG_SVR_M(text);
 }
 
 template<typename Generic>

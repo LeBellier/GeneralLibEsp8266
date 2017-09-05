@@ -15,7 +15,8 @@
 #include <ArduinoOTA.h>
 #include <FS.h>
 
-#include <DNSServer.h>
+//#include <DNSServer.h>
+#include <ESP8266mDNS.h>
 #include <Libs/ESP8266TelnetServer.h>
 #include <memory>
 
@@ -53,20 +54,23 @@ public:
 
 	void setDebug(bool);
 
-	std::unique_ptr<ESP8266WebServer> httpSvr;
+	void printDebug(String text);
 
 	template<typename Generic>
 	void DEBUG_SVR_M(Generic text);
+
+	std::unique_ptr<ESP8266WebServer> httpSvr;
+
 private:
 	// DNS server
-	const byte DNS_PORT = 53;
+	//const byte DNS_PORT = 53;
 	uint8_t serversON = 0;
 
 	char* dnsName = "ESP8266";
 	char* userName = "ESP8266"; // OTA and FTP
 	char* passeword = "ESP8266"; // OTA and FTP
 
-	std::unique_ptr<DNSServer> dnsSvr;
+	std::unique_ptr<MDNSResponder> dnsSvr;
 	std::unique_ptr<FtpServer> ftpSvr;
 	std::unique_ptr<ESP8266TelnetServer> telnetSvr;
 
