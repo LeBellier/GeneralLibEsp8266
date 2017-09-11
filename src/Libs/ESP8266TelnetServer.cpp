@@ -5,7 +5,7 @@
  *      Author: Bruno
  */
 
-#include <Libs/ESP8266TelnetServer.h>
+#include "ESP8266TelnetServer.h"
 
 WiFiServer telnet_srv(23);
 
@@ -33,11 +33,15 @@ void ESP8266TelnetServer::handleClient() {
 	}
 
 	while (serverClient.available()) { // get data from Client
+
 		char charRX = serverClient.read();
+		Serial.print(charRX);
 		if (charRX == 'q') {
 			stopClient();
 		}
-		//DEBUG_PRINT((String ) charRX);
+		//		if (serverClient.find(END_CHAR) && readCallBack != NULL) {
+//			readCallBack(serverClient.readStringUntil(END_CHAR));
+//		}
 	}
 }
 bool ESP8266TelnetServer::hasConnectedClient() {
@@ -68,6 +72,11 @@ size_t ESP8266TelnetServer::write(const uint8_t* buffer, size_t size) {
 }
 void ESP8266TelnetServer::setDebug(bool param) {
 	_debug = param;
+}
+
+//read data callback
+void ESP8266TelnetServer::setReadCallback(void (*func)(String)) {
+	readCallBack = func;
 }
 template<typename Generic>
 void ESP8266TelnetServer::DEBUG_SVR_TELNET(Generic text) {

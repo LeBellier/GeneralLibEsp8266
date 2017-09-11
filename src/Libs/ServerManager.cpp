@@ -171,6 +171,9 @@ void ServerManager::setDebug(bool param) {
 void ServerManager::printDebug(String text) {
 	DEBUG_SVR_M(text);
 }
+void ServerManager::setReadCallback(void (*func)(String)) {
+	telnetSvr->setReadCallback(func);
+}
 
 template<typename Generic>
 void ServerManager::DEBUG_SVR_M(Generic text) {

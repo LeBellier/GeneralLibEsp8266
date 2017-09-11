@@ -53,6 +53,8 @@ public:
 	void setPasseword(char*);
 
 	void setDebug(bool);
+	//read data callback
+	void setReadCallback(void (*func)(String));
 
 	void printDebug(String text);
 
