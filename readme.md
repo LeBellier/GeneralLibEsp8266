@@ -6,13 +6,13 @@ This project is used to capitalize code through my different projects on ESP8266
 Here you can found one example where this lib is used:
 https://github.com/LeBellier/LEDTable
 
-####Main characteristic
+#### Main characteristic
 - Manager debug 
 - Enable FTP, Telnet,  OTA, HTTP, DNS serveur 
 - Enable SPIFFS 
 - Easy wifi connection to wifi networks
 
-### Installation
+#### Installation
 
 Unzip the projet in your `~/Documents/Arduino/libraries` folder.
 
@@ -22,12 +22,14 @@ To enable the telnet client through command line on windows, you have to run the
 
 `dism /online /Enable-Feature /FeatureName:TelnetClient`
 
-###Under license by :
-https://github.com/nailbuster/esp8266FTPServer
-https://github.com/rstephan/ArtnetWifi
-https://github.com/adafruit/Adafruit_NeoPixel
-https://github.com/tzapu/WiFiManager
-#####And built-in libs:
+### Under license by :
+
+ - https://github.com/nailbuster/esp8266FTPServer
+ - https://github.com/rstephan/ArtnetWifi
+ - https://github.com/adafruit/Adafruit_NeoPixel
+ - https://github.com/tzapu/WiFiManager
+
+#### And built-in libs:
 ArduinoOTA
 FS
 
