@@ -39,7 +39,7 @@ void ESP8266TelnetServer::handleClient() {
 		if (charRX == 'q') {
 			stopClient();
 		}
-		//		if (serverClient.find(END_CHAR) && readCallBack != NULL) {
+//		if (serverClient.find(END_CHAR) && readCallBack != NULL) {
 //			readCallBack(serverClient.readStringUntil(END_CHAR));
 //		}
 	}
