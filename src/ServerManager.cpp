@@ -171,7 +171,7 @@ void ServerManager::setDebug(bool param) {
 void ServerManager::printDebug(String text) {
 	DEBUG_SVR_M(text);
 }
-void ServerManager::setReadCallback(void (*func)(String)) {
+void ServerManager::setReadTelnetCallback(void (*func)(char*, uint8_t)) {
 	telnetSvr->setReadCallback(func);
 }
 

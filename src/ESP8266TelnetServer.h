@@ -34,13 +34,13 @@ public:
 
 	void setDebug(bool);
 	//called when read some char ends by \n
-	void setReadCallback(void (*func)(String));
+	void setReadCallback(void (*func)(char*, uint8_t));
 
 private:
 	WiFiClient serverClient;
-	void (*readCallBack)(String) = NULL;
+	void (*readCallBack)(char*, uint8_t) = NULL;
 
-	uint8_t artnetPacket[MAX_BUFFER_TELNET];
+	char artnetPacket[MAX_BUFFER_TELNET];
 	uint8_t nbChar = 0;
 
 	bool _debug = true;

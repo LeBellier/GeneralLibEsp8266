@@ -35,13 +35,18 @@ void ESP8266TelnetServer::handleClient() {
 	while (serverClient.available()) { // get data from Client
 
 		char charRX = serverClient.read();
-		Serial.print(charRX);
-		if (charRX == 'q') {
-			stopClient();
+		if (charRX == 13 || charRX == 10) {
+			if (nbChar > 0) {
+				readCallBack(artnetPacket, nbChar);
+				nbChar = 0;
+			}
+		} else if (nbChar == MAX_BUFFER_TELNET) {
+			DEBUG_SVR_TELNET("Too many char in this message");
+			nbChar = 0;
+		} else if (charRX >= 0) {
+			artnetPacket[nbChar] = charRX;
+			nbChar++;
 		}
-//		if (serverClient.find(END_CHAR) && readCallBack != NULL) {
-//			readCallBack(serverClient.readStringUntil(END_CHAR));
-//		}
 	}
 }
 bool ESP8266TelnetServer::hasConnectedClient() {
@@ -75,7 +80,7 @@ void ESP8266TelnetServer::setDebug(bool param) {
 }
 
 //read data callback
-void ESP8266TelnetServer::setReadCallback(void (*func)(String)) {
+void ESP8266TelnetServer::setReadCallback(void (*func)(char*, uint8_t)) {
 	readCallBack = func;
 }
 template<typename Generic>

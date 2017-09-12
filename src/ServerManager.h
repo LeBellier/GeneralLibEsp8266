@@ -17,7 +17,7 @@
 
 //#include <DNSServer.h>
 #include <ESP8266mDNS.h>
-#include <Libs/ESP8266TelnetServer.h>
+#include <ESP8266TelnetServer.h>
 #include <memory>
 
 extern "C" {
@@ -54,7 +54,7 @@ public:
 
 	void setDebug(bool);
 	//read data callback
-	void setReadCallback(void (*func)(String));
+	void setReadTelnetCallback(void (*func)(char*, uint8_t));
 
 	void printDebug(String text);
 
