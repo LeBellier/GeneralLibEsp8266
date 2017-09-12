@@ -5,88 +5,106 @@
  *      Author: Bruno
  */
 
-#include <ServerManager.h>
+#include "ServerManager.h"
 
 ServerManager::ServerManager() {
+
 }
 ServerManager::~ServerManager() {
 }
 
-void ServerManager::initDnsHttpFtpOtaTelnetServers(char* dnsName, char* ftpUser,
-		char* ftpPasseWord, char*otaHostName, char*otaPasseWord) {
+void ServerManager::setServersON(uint8_t status) {
+	serversON = status;
 
-	//init spiffs (spi file system)
-	if (!SPIFFS.begin()) {
-		DEBUG_INIT_PRINTLN("Can't open de File system");
+	if (!SPIFFS.begin()) { //init spiffs (spi file system)
+		DEBUG_SVR_M("Can't open de File system");
 	}
 
-	//init DNS
-	if (mdns.begin(dnsName, WiFi.localIP())) {
-		DEBUG_INIT_PRINTLN("MDNS responder started");
-		DEBUG_INIT_PRINT("You can use the name: http://");
-		DEBUG_INIT_PRINT(dnsName);
-		DEBUG_INIT_PRINTLN(".local/");
+	if (serversON & SERVER_TELNET) { //init Telnet Server
+		telnetSvr.reset(new ESP8266TelnetServer());
+		telnetSvr->begin();
+	}
+	if (serversON & SERVER_DNS) { //init DNS
+		dnsSvr.reset(new MDNSResponder());
+		//init DNS
+		if (dnsSvr->begin(dnsName, WiFi.localIP())) {
+			DEBUG_SVR_M("MDNS responder started");
+			String msg = F("You can use the name: http://{1}.local/");
+			msg.replace("{1}", dnsName);
+			DEBUG_SVR_M(msg);
+		}
+	}
+	if (serversON & SERVER_HTTP) { //init Http Server
+		httpSvr.reset(new ESP8266WebServer());
+		// in the setup of the .ino
+		//httpSvr->onNotFound(handleRequestFile);
+		//serverManager.getHttpServer().on("/pixel", HTTP_GET, pixelRequest); // and all other adresse page you want out of file
+		httpSvr->begin();
+		DEBUG_SVR_M("HTTP server started");
 	}
 
-	//init Http Server
-	// in the setup of the .ino
-	//serverManager.getHttpServer().onNotFound(handleRequestOnFile);
-	//serverManager.getHttpServer().on("/pixel", HTTP_GET, pixelRequest); // and all other adresse page you want out of file
-	httpServer.begin();
-	DEBUG_INIT_PRINTLN("HTTP server started");
+	if (serversON & SERVER_FTP) { //init Ftp Server
+		ftpSvr.reset(new FtpServer());
+		ftpSvr->begin(userName, passeword); //username, password for ftp.  set ports in ESP8266FtpServer.h  (default 21, 50009 for PASV)
+		String msg = F("FTP server started; MdP:{1}, User:{2}");
+		msg.replace("{2}", userName);
+		msg.replace("{1}", passeword);
+		DEBUG_SVR_M(msg);
+	}
 
-	//init Ftp Server
-	ftpSrv.begin(ftpUser, ftpPasseWord); //username, password for ftp.  set ports in ESP8266FtpServer.h  (default 21, 50009 for PASV)
-	DEBUG_INIT_PRINT("FTP server started; MdP:");
-	DEBUG_INIT_PRINT(ftpPasseWord);
-	DEBUG_INIT_PRINT(", User:");
-	DEBUG_INIT_PRINTLN(ftpUser);
+	if (serversON & SERVER_OTA) { //init Ota Server
+		//ArduinoOTA.setPort(8266);// Port defaults to 8266
+		ArduinoOTA.setHostname(userName);		// Hostname defaults to esp8266-[ChipID]
+		ArduinoOTA.setPassword(passeword); // No authentication by default
+		ArduinoOTA.begin();
+		String msg = F("OTA server started; MdP:{1}, User:{2}");
+		msg.replace("{2}", userName);
+		msg.replace("{1}", passeword);
+		DEBUG_SVR_M(msg);
+	}
 
-	//init Ota Server
-	//ArduinoOTA.setPort(8266);// Port defaults to 8266
-	ArduinoOTA.setHostname(otaHostName);	// Hostname defaults to esp8266-[ChipID]
-	ArduinoOTA.setPassword(otaPasseWord); // No authentication by default
-	ArduinoOTA.begin();
-	DEBUG_INIT_PRINTLN("OTA server started");
-
-	//init Telnet Server
-	telnetServeur.begin();
-
-#ifdef DEBUG_INIT
-	delay(20);
-#endif
+	if (_debug) {
+		delay(20);
+	}
 }
 
-void ServerManager::updateServers() {
-	mdns.update();
-	ftpSrv.handleFTP();
-	httpServer.handleClient();
+void ServerManager::update() {
 	ArduinoOTA.handle();
-	telnetServeur.handleClient();
+	if (serversON & SERVER_TELNET) {
+		telnetSvr->handleClient();
+	}
+	if (serversON & SERVER_DNS) {
+		dnsSvr->update();
+	}
+	if (serversON & SERVER_HTTP) {
+		httpSvr->handleClient();
+	}
+	if (serversON & SERVER_FTP) {
+		ftpSvr->handleFTP();
+	}
 }
 String ServerManager::printRequest() {
 	String message = "URI: ";
-	message += httpServer.uri();
+	message += httpSvr->uri();
 	message += "\r\n  Method: ";
-	message += (httpServer.method() == HTTP_GET) ? "GET" : "POST";
+	message += (httpSvr->method() == HTTP_GET) ? "GET" : "POST";
 	message += "\r\n  Arguments: ";
-	message += httpServer.args();
-	for (uint8_t i = 0; i < httpServer.args(); i++) {
-		message += "\r\n NAME:" + httpServer.argName(i) + " VALUE:"
-				+ httpServer.arg(i);
+	message += httpSvr->args();
+	for (uint8_t i = 0; i < httpSvr->args(); i++) {
+		message += "\r\n NAME:" + httpSvr->argName(i) + " VALUE:" + httpSvr->arg(i);
 	}
 	return message;
 }
 void ServerManager::handleRequestFile() {
-	String uriAsked = httpServer.uri();
-	printlnDebug(uriAsked);
+	String uriAsked = httpSvr->uri();
+	DEBUG_SVR_M(uriAsked);
 
 	//check the request
 	if (!loadFromSpiffs(uriAsked)) { // no file at the uri found
 		String message = "File Not Detected  ";
 		message += printRequest();
-		httpServer.send(404, "text/plain", message);
-		printlnDebug(message);
+		httpSvr->send(404, "text/plain", message);
+		DEBUG_SVR_M(message);
 	}
 }
 
@@ -123,29 +141,50 @@ bool ServerManager::loadFromSpiffs(String path) {
 		return false;
 	}
 
-	if (httpServer.hasArg("download"))
+	if (httpSvr->hasArg("download"))
 		dataType = "application/octet-stream";
-	if (httpServer.streamFile(dataFile, dataType) != dataFile.size()) {
-		printlnDebug("Sent less data than expected!");
+	if (httpSvr->streamFile(dataFile, dataType) != dataFile.size()) {
+		DEBUG_SVR_M("Sent less data than expected!");
 		return false;
 	}
 	dataFile.close();
 	return true;
 }
 
-void ServerManager::printDebug(String s) {
-	if (telnetServeur.hasConnectedClient()) {
-		telnetServeur.print(s);
-	} else {
-		DEBUG_PRINT(s);
-	}
+uint8_t ServerManager::isServersON() {
+	return serversON;
 }
 
-void ServerManager::printlnDebug(String s) {
-	if (telnetServeur.hasConnectedClient()) {
-		telnetServeur.println(s);
-	} else {
-		DEBUG_PRINTLN(s);
+void ServerManager::setDnsName(char*param) {
+	dnsName = param;
+}
+void ServerManager::setUserName(char*param) {
+	userName = param;
+}
+void ServerManager::setPasseword(char*param) {
+	passeword = param;
+}
+void ServerManager::setDebug(bool param) {
+	_debug = param;
+}
+
+void ServerManager::printDebug(String text) {
+	DEBUG_SVR_M(text);
+}
+void ServerManager::setReadTelnetCallback(void (*func)(char*, uint8_t)) {
+	telnetSvr->setReadCallback(func);
+}
+
+template<typename Generic>
+void ServerManager::DEBUG_SVR_M(Generic text) {
+	if (_debug) {
+		if (telnetSvr->hasConnectedClient()) {
+			telnetSvr->print("*SM*: ");
+			telnetSvr->println(text);
+		} else {
+			Serial.print("*SM*: ");
+			Serial.println(text);
+		}
 	}
 }
 

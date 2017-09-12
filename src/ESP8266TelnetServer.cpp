@@ -17,7 +17,7 @@ ESP8266TelnetServer::~ESP8266TelnetServer() {
 void ESP8266TelnetServer::begin() {
 	telnet_srv.begin();
 	telnet_srv.setNoDelay(true);
-	DEBUG_INIT_PRINTLN("Please connect Telnet Client.");
+	DEBUG_SVR_TELNET("Please connect Telnet Client.");
 }
 
 void ESP8266TelnetServer::handleClient() {
@@ -27,17 +27,26 @@ void ESP8266TelnetServer::handleClient() {
 		if (!hasConnectedClient()) {
 			stopClient();
 			serverClient = telnet_srv.available();
-			DEBUG_PRINTLN("New Telnet client");
+			DEBUG_SVR_TELNET("New Telnet client");
 			serverClient.flush(); // clear input buffer, else you get strange characters
 		}
 	}
 
 	while (serverClient.available()) { // get data from Client
+
 		char charRX = serverClient.read();
-		if (charRX == 'q') {
-			stopClient();
+		if (charRX == 13 || charRX == 10) {
+			if (nbChar > 0) {
+				readCallBack(artnetPacket, nbChar);
+				nbChar = 0;
+			}
+		} else if (nbChar == MAX_BUFFER_TELNET) {
+			DEBUG_SVR_TELNET("Too many char in this message");
+			nbChar = 0;
+		} else if (charRX >= 0) {
+			artnetPacket[nbChar] = charRX;
+			nbChar++;
 		}
-		DEBUG_PRINT((String ) charRX);
 	}
 }
 bool ESP8266TelnetServer::hasConnectedClient() {
@@ -47,7 +56,7 @@ bool ESP8266TelnetServer::hasConnectedClient() {
 void ESP8266TelnetServer::stopClient() {
 	if (serverClient) {
 		serverClient.stop();
-		DEBUG_PRINTLN("Telnet Client Stop");
+		DEBUG_SVR_TELNET("Telnet Client Stop");
 	}
 }
 
@@ -65,4 +74,24 @@ size_t ESP8266TelnetServer::write(const uint8_t* buffer, size_t size) {
 	}
 	delay(10);  // to avoid strange characters left in buffer
 	return size;
+}
+void ESP8266TelnetServer::setDebug(bool param) {
+	_debug = param;
+}
+
+//read data callback
+void ESP8266TelnetServer::setReadCallback(void (*func)(char*, uint8_t)) {
+	readCallBack = func;
+}
+template<typename Generic>
+void ESP8266TelnetServer::DEBUG_SVR_TELNET(Generic text) {
+	if (_debug) {
+		if (hasConnectedClient()) {
+			print("*TelS*: ");
+			println(text);
+		} else {
+			Serial.print("*TelS*: ");
+			Serial.println(text);
+		}
+	}
 }

@@ -1,6 +1,4 @@
-#include <Adafruit_NeoPixel.h>
 #include "MatrixStrip.h"
-#include "ConstCharColor.h"
 
 MatrixStrip::MatrixStrip(uint8_t pinStrip, uint8_t nbRows, uint8_t nbColumns) :
 		Adafruit_NeoPixel(nbRows * nbColumns, pinStrip, NEO_GRB + NEO_KHZ800), nbRows(
